@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileUploadServer": {
+      "commandName": "Project",
+      "commandLineArgs": "directory=c:\\temp\\downloads"
+    }
+  }
+}
