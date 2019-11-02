@@ -29,7 +29,7 @@ namespace FileUploadServer
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        {                       
             app.Use(IsFileUpload);
             app.Run(Main);
         }
@@ -50,29 +50,23 @@ namespace FileUploadServer
         private async Task Main(HttpContext context)
         {
             string directoryToUplaod = Configuration.GetValue<string>("directory");
-
-            var boundary = context.Request.GetMultipartBoundary();
-
-            var reader = new MultipartReader(boundary, context.Request.Body);
+            
+            var reader = new MultipartReader(context.Request.GetMultipartBoundary(), context.Request.Body);
 
             MultipartSection section = await reader.ReadNextSectionAsync();
 
             while (section != null)
             {
-                var dispositionHeader = section.GetContentDispositionHeader();
-
-                if (dispositionHeader.IsFileDisposition())
+                if (section.GetContentDispositionHeader().IsFileDisposition())
                 {
                     var fileSection = section.AsFileSection();
 
                     if (!Directory.Exists(directoryToUplaod))
                     {
                         Directory.CreateDirectory(directoryToUplaod);
-                    }
+                    }                    
 
-                    string path = Path.Combine(directoryToUplaod, fileSection.FileName);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
+                    using (var stream = new FileStream(Path.Combine(directoryToUplaod, fileSection.FileName), FileMode.Create))
                     {
                         await fileSection.FileStream.CopyToAsync(stream);
                     }
