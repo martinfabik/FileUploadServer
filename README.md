@@ -1,5 +1,5 @@
 # FileUploadServer
-Simple service listening to multipart request.
+Simple service listening for multipart requests.
 
 ## Usage
 ### Server side
